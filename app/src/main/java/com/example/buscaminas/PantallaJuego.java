@@ -1,9 +1,11 @@
 package com.example.buscaminas;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -18,6 +20,7 @@ import com.example.buscaminas.Recursos.Casilla;
 import com.example.buscaminas.Recursos.Tablero;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback{
 
@@ -29,6 +32,8 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     private boolean activo = true;
     private boolean bandera=false;
     private Context context;
+    private final int NUM_MINAS=18;
+
 
 
     public PantallaJuego(Context context) {
@@ -38,7 +43,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         this.context=context;
         componentes= new ArrayList<>();
         reiniciarJuego();
-        tablero= new Tablero(context,800,500,dimTablero,casillas);
+        tablero= new Tablero(context,1000,2500,dimTablero,casillas,getResources());
 
     }
 
@@ -48,15 +53,8 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         p.setAntiAlias(true);
 
         canvas.drawColor(Color.WHITE);
-
-
-
-//        Ondraw del tablero
+        //  Ondraw del tablero
             tablero.onDraw(canvas);
-//        Ondraw de los bloques sin pulsar
-
-//        Ondraw de los bloques pulsados
-
         //        Ondraw del menu
         for (Componente componente: componentes) {
             componente.onDraw(canvas);
@@ -72,7 +70,15 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-
+                for(Componente c:componentes){
+                    if(c instanceof Button){
+                        Button btnPresionado= (Button) c;
+                        if((btnPresionado.estaDentro(x,y) && btnPresionado.getNombre().equals("Bandera"))){
+                            bandera=!bandera;
+                            Log.i("Bandera","estado: "+bandera);
+                        }
+                    }
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
 
@@ -117,7 +123,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
 
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -172,7 +178,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void colocarMinas(){
-        int cantidadDeMinasPorColocar = 8;
+        int cantidadDeMinasPorColocar = NUM_MINAS;
         if(dimTablero==12) cantidadDeMinasPorColocar = 20;
         if(dimTablero==16) cantidadDeMinasPorColocar = 40;
         while (cantidadDeMinasPorColocar>0){
