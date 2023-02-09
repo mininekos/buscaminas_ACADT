@@ -182,11 +182,6 @@ public class Tablero {
                 if(casillas[i][j].banderita == true){
                     img= bmpBandera.createScaledBitmap(bmpBandera,100 ,100,true);
                     canvas.drawBitmap(img,tam+anchoCasilla/7,filaActual+anchoCasilla/7,null);
-//                    canvas.drawText(
-//                            "B",
-//                            tam + (anchoCasilla/2) - 25,
-//                            filaActual + anchoCasilla/2 + 30,
-//                            flag);
                 }
             }
             filaActual += anchoCasilla;
