@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo"
-    tools:context=".MainActivity">
+    tools:context=".Configuracion">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="215dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,21 +19,27 @@
         app:layout_constraintVertical_bias="0.5">
 
         <Button
-            android:id="@+id/btnJugar"
+            android:id="@+id/btnFacil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/Jugar" />
+            android:text="@string/facil" />
 
         <Button
-            android:id="@+id/btnConfiguracion"
+            android:id="@+id/btnMedio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="@string/Medio" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btnDificil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="@string/Dificil" />
+
+        <Button
+            android:id="@+id/btnVolver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Volver" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Buscaminas</string>
+    <string name="facil">Facil</string>
+    <string name="Medio">Medio</string>
+    <string name="Dificil">Dificil</string>
+    <string name="Volver">Volver</string>
+    <string name="Jugar">Jugar</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.example.buscaminas;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,7 +20,6 @@ import com.example.buscaminas.Recursos.Casilla;
 import com.example.buscaminas.Recursos.Tablero;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback{
 
@@ -32,8 +31,8 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     private boolean activo = true;
     private boolean bandera=false;
     private Context context;
-    private final int NUM_MINAS=18;
-
+    private SharedPreferences preferencias;
+    private int numMinas;
 
 
     public PantallaJuego(Context context) {
@@ -41,6 +40,8 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         getHolder().addCallback(this);
         setBackgroundColor(Color.WHITE);
         this.context=context;
+        preferencias=context.getSharedPreferences("Todo", Context.MODE_PRIVATE);
+        numMinas =preferencias.getInt("Minas",0);
         componentes= new ArrayList<>();
         reiniciarJuego();
         tablero= new Tablero(context,1000,2500,dimTablero,casillas,getResources());
@@ -75,7 +76,14 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                         Button btnPresionado= (Button) c;
                         if((btnPresionado.estaDentro(x,y) && btnPresionado.getNombre().equals("Bandera"))){
                             bandera=!bandera;
-                            Log.i("Bandera","estado: "+bandera);
+                        }
+                        if((btnPresionado.estaDentro(x,y) && btnPresionado.getNombre().equals("Reset"))){
+                            reiniciarJuego();
+                            tablero.setCasillas(casillas);
+                            Log.i("Reinicio","reiniciaste");
+                        }
+                        if((btnPresionado.estaDentro(x,y) && btnPresionado.getNombre().equals("Exit"))){
+                            Log.i("Salir","salir");
                         }
                     }
                 }
@@ -102,7 +110,6 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                                 casillas[i][j].destapada = true;
 
                                 if (casillas[i][j].contenido == 100) {
-                                    //Toast.makeText(this, "Boooooom! Perdiste", Toast.LENGTH_LONG).show();
                                     destaparBombas();
                                     activo = false;
                                 } else if (casillas[i][j].contenido == 0) {
@@ -116,7 +123,6 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
             }
 
             if (activo && ganar()){
-                //Toast.makeText(this, "Felicitacinoes, ganaste!", Toast.LENGTH_LONG).show();
                 destaparBombas();
                 activo = false;
             }
@@ -130,6 +136,8 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         componentes.add(new Barra(0,getHeight()*0.9F,Color.BLUE,getWidth(),getHeight()*0.1F));
         componentes.add(new Button((int)(getWidth()*0.45),(int)(getHeight()*0.91),getResources(),R.drawable.banderita,(int) (getWidth()*0.1),(int)(getHeight()*0.07),"Bandera"));
+        componentes.add(new Button((int)(getWidth()*0.7),(int)(getHeight()*0.91),getResources(),R.drawable.btn_reset,(int) (getWidth()*0.2),(int)(getHeight()*0.07),"Reset"));
+        componentes.add(new Button((int)(getWidth()*0.1),(int)(getHeight()*0.91),getResources(),R.drawable.btn_salir,(int) (getWidth()*0.2),(int)(getHeight()*0.07),"Exit"));
 
     }
 
@@ -178,7 +186,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void colocarMinas(){
-        int cantidadDeMinasPorColocar = NUM_MINAS;
+        int cantidadDeMinasPorColocar = numMinas;
         if(dimTablero==12) cantidadDeMinasPorColocar = 20;
         if(dimTablero==16) cantidadDeMinasPorColocar = 40;
         while (cantidadDeMinasPorColocar>0){
@@ -201,7 +209,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
-        if (cantidad == 56){
+        if (cantidad == (64- numMinas)){
             return true;
         } else {
             return false;

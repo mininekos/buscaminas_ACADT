@@ -67,6 +67,7 @@ public class Tablero {
                     paint.setARGB(153, 204,204,204);
                 }
 
+                //Pintar lineas de cuadros y cuadros
                 canvas.drawRect(tam, filaActual, tam+anchoCasilla-1,
                         filaActual+anchoCasilla-2, paint);
                 canvas.drawLine(tam, filaActual, tam+anchoCasilla,
@@ -121,6 +122,7 @@ public class Tablero {
                 if (casillas[i][j].contenido>=1 &&
                         casillas[i][j].contenido<8 &&
                         casillas[i][j].destapada) {
+                    //Pinto el color dependiendo de la cantidad de minas adyacentes
                     //Si cambio la separacion del eje X tenco q cambiar el texto
                     switch (casillas[i][j].contenido) {
                         case 1:
@@ -174,11 +176,13 @@ public class Tablero {
                     canvas.drawBitmap(img,tam+anchoCasilla/7,filaActual+anchoCasilla/7,null);
                 }
 
+                //Pincel bandera
                 Paint flag = new Paint();
                 flag.setARGB(255, 0, 0, 0);
                 flag.setTextSize((anchoCasilla/4)*3);
                 flag.setTypeface(Typeface.DEFAULT_BOLD);
 
+                //Pîntar bandera
                 if(casillas[i][j].banderita == true){
                     img= bmpBandera.createScaledBitmap(bmpBandera,100 ,100,true);
                     canvas.drawBitmap(img,tam+anchoCasilla/7,filaActual+anchoCasilla/7,null);
@@ -186,5 +190,10 @@ public class Tablero {
             }
             filaActual += anchoCasilla;
         }
+    }
+
+
+    public void setCasillas(Casilla[][] casillas) {
+        this.casillas = casillas;
     }
 }

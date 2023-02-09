@@ -9,6 +9,9 @@ public class PantalladeJuegoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pantallade_juego);
+        getSupportActionBar().hide();
+        PantallaJuego pantalla= new PantallaJuego(this);
+        setContentView(pantalla);
+        //setContentView(R.layout.activity_pantallade_juego);
     }
 }
