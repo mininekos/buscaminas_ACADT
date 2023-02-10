@@ -5,4 +5,6 @@
     <string name="Dificil">Dificil</string>
     <string name="Volver">Volver</string>
     <string name="Jugar">Jugar</string>
+    <string name="Configuracion">Configuracion</string>
+    <string name="Salir">Salir</string>
 </resources>

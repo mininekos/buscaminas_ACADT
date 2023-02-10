@@ -1,10 +1,14 @@
 package com.example.buscaminas;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -26,13 +30,16 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     private GameLoopThread gameThread;
     private ArrayList<Componente> componentes;
     private Tablero tablero;
-    private int dimTablero=8;
+    private final int dimTablero=8;
     private Casilla[][] casillas;
     private boolean activo = true;
     private boolean bandera=false;
     private Context context;
     private SharedPreferences preferencias;
     private int numMinas;
+    private MediaPlayer media;
+    private SoundPool soundPool;
+    private int musicaBomba;
 
 
     public PantallaJuego(Context context) {
@@ -43,9 +50,15 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         preferencias=context.getSharedPreferences("Todo", Context.MODE_PRIVATE);
         numMinas =preferencias.getInt("Minas",0);
         componentes= new ArrayList<>();
+        media=MediaPlayer.create(context,R.raw.musica_fondo);
+        media.setLooping(true);
+        media.start();
         reiniciarJuego();
         tablero= new Tablero(context,1000,2500,dimTablero,casillas,getResources());
 
+
+        soundPool = new SoundPool( 1, AudioManager.STREAM_MUSIC , 0);
+        musicaBomba=soundPool.load(context,R.raw.explosion,0);
     }
 
     @Override
@@ -56,7 +69,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         canvas.drawColor(Color.WHITE);
         //  Ondraw del tablero
             tablero.onDraw(canvas);
-        //        Ondraw del menu
+        //   Ondraw del menu
         for (Componente componente: componentes) {
             componente.onDraw(canvas);
         }
@@ -84,15 +97,10 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                         }
                         if((btnPresionado.estaDentro(x,y) && btnPresionado.getNombre().equals("Exit"))){
                             Log.i("Salir","salir");
+                            destroy();
                         }
                     }
                 }
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                break;
-            case MotionEvent.ACTION_UP:
-
                 break;
         }
         if (activo){
@@ -110,6 +118,9 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                                 casillas[i][j].destapada = true;
 
                                 if (casillas[i][j].contenido == 100) {
+                                    media.pause();
+                                    soundPool.play(musicaBomba,1,1,1,0,1);
+
                                     destaparBombas();
                                     activo = false;
                                 } else if (casillas[i][j].contenido == 0) {
@@ -134,6 +145,11 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
+
+        gameThread=new GameLoopThread(this);
+        gameThread.setRunning(true);
+        gameThread.start();
+
         componentes.add(new Barra(0,getHeight()*0.9F,Color.BLUE,getWidth(),getHeight()*0.1F));
         componentes.add(new Button((int)(getWidth()*0.45),(int)(getHeight()*0.91),getResources(),R.drawable.banderita,(int) (getWidth()*0.1),(int)(getHeight()*0.07),"Bandera"));
         componentes.add(new Button((int)(getWidth()*0.7),(int)(getHeight()*0.91),getResources(),R.drawable.btn_reset,(int) (getWidth()*0.2),(int)(getHeight()*0.07),"Reset"));
@@ -148,15 +164,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
-        boolean retry= true;
-        gameThread.setRunning(false);
-        while (retry){
-            try {
-                gameThread.join();
-                retry=false;
-            }
-            catch (InterruptedException e){}
-        }
+        destroy();
     }
 
     public void destaparBombas(){
@@ -181,14 +189,12 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         colocarMinas();
         contarBombasDelPerimetro();
         activo = true;
-
+        media.start();
         invalidate();
     }
 
     private void colocarMinas(){
         int cantidadDeMinasPorColocar = numMinas;
-        if(dimTablero==12) cantidadDeMinasPorColocar = 20;
-        if(dimTablero==16) cantidadDeMinasPorColocar = 40;
         while (cantidadDeMinasPorColocar>0){
             int fila = (int) (Math.random()*dimTablero);
             int columna = (int) (Math.random()*dimTablero);
@@ -209,7 +215,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
-        if (cantidad == (64- numMinas)){
+        if (cantidad == (dimTablero*dimTablero- numMinas)){
             return true;
         } else {
             return false;
@@ -306,4 +312,22 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
 
 
     }
+
+    public void destroy(){
+        boolean retry= true;
+        gameThread.setRunning(false);
+        while (retry){
+            try {
+                gameThread.join();
+                retry=false;
+            }
+            catch (InterruptedException e){}
+        }
+        media.stop();
+        ((Activity) context).finish();
+
+    }
+
+
+
 }

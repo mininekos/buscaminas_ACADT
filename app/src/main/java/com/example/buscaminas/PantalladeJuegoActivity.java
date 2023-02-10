@@ -6,12 +6,18 @@ import android.os.Bundle;
 
 public class PantalladeJuegoActivity extends AppCompatActivity {
 
+    private PantallaJuego pantalla;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-        PantallaJuego pantalla= new PantallaJuego(this);
+        pantalla= new PantallaJuego(PantalladeJuegoActivity.this);
         setContentView(pantalla);
-        //setContentView(R.layout.activity_pantallade_juego);
+    }
+
+    @Override
+    public void onBackPressed() {
+        pantalla.destroy();
+        finish();
     }
 }

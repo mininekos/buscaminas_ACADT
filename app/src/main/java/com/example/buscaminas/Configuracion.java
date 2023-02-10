@@ -38,17 +38,17 @@ public class Configuracion extends AppCompatActivity implements View.OnClickList
         if(R.id.btnFacil==view.getId()){
             editor.putInt("Minas",8);
             editor.commit();
-            crearDialogo(8);
+            crearDialogo(8).show();
         }
         if(R.id.btnMedio==view.getId()){
             editor.putInt("Minas",12);
             editor.commit();
-            crearDialogo(12);
+            crearDialogo(12).show();
         }
         if(R.id.btnDificil==view.getId()){
             editor.putInt("Minas",16);
             editor.commit();
-            crearDialogo(16);
+            crearDialogo(16).show();
         }
         if(R.id.btnVolver==view.getId()){
             finish();

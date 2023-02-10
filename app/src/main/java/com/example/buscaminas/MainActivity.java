@@ -24,19 +24,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         //Esto es lo q se deberia de quedar
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
-//        View view = binding.getRoot();
-//        setContentView(view);
-//        binding.btnJugar.setOnClickListener(this);
-//        binding.btnConfiguracion.setOnClickListener(this);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+        binding.btnJugar.setOnClickListener(this);
+        binding.btnConfiguracion.setOnClickListener(this);
+        binding.btnSalir.setOnClickListener(this);
 
         preferencias=getSharedPreferences("Todo", Context.MODE_PRIVATE);
         editor = preferencias.edit();
         editor.putInt("Minas",8);
         editor.commit();
         //Juego quitar al terminar las pruebas
-        PantallaJuego pantalla= new PantallaJuego(this);
-        setContentView(pantalla);
+//        PantallaJuego pantalla= new PantallaJuego(this);
+//        setContentView(pantalla);
     }
 
     @Override
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(R.id.btnConfiguracion==view.getId()){
             Intent i = new Intent(MainActivity.this,Configuracion.class);
             startActivity(i);
+        }
+        if(R.id.btnSalir==view.getId()){
+            crearDialogo().show();
         }
     }
 
