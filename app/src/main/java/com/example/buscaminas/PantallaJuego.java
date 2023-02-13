@@ -17,6 +17,7 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import com.example.buscaminas.Hilos.GameLoopThread;
+import com.example.buscaminas.Logica.Servicio;
 import com.example.buscaminas.Menu.Barra;
 import com.example.buscaminas.Menu.Button;
 import com.example.buscaminas.Menu.Componente;
@@ -32,7 +33,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     private Tablero tablero;
     private final int dimTablero=8;
     private Casilla[][] casillas;
-    private boolean activo = true;
+    private boolean activo;
     private boolean bandera=false;
     private Context context;
     private SharedPreferences preferencias;
@@ -52,8 +53,10 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         componentes= new ArrayList<>();
         media=MediaPlayer.create(context,R.raw.musica_fondo);
         media.setLooping(true);
+        casillas= Servicio.getServicio(dimTablero,numMinas,casillas).reiniciarJuego();
+        activo = true;
         media.start();
-        reiniciarJuego();
+        invalidate();
         tablero= new Tablero(context,1000,2500,dimTablero,casillas,getResources());
 
 
@@ -91,7 +94,10 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                             bandera=!bandera;
                         }
                         if((btnPresionado.estaDentro(x,y) && btnPresionado.getNombre().equals("Reset"))){
-                            reiniciarJuego();
+                            casillas= Servicio.getServicio(dimTablero,numMinas,casillas).reiniciarJuego();
+                            activo = true;
+                            media.start();
+                            invalidate();
                             tablero.setCasillas(casillas);
                             Log.i("Reinicio","reiniciaste");
                         }
@@ -121,7 +127,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                                     media.pause();
                                     soundPool.play(musicaBomba,1,1,1,0,1);
 
-                                    destaparBombas();
+                                    casillas= Servicio.getServicio(dimTablero,numMinas,casillas).destaparBombas();
                                     activo = false;
                                 } else if (casillas[i][j].contenido == 0) {
                                     recorrer(i, j);
@@ -133,8 +139,8 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
 
-            if (activo && ganar()){
-                destaparBombas();
+            if (activo && Servicio.getServicio(dimTablero,numMinas,casillas).ganar()){
+                casillas= Servicio.getServicio(dimTablero,numMinas,casillas).destaparBombas();
                 activo = false;
             }
 
@@ -167,43 +173,6 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         destroy();
     }
 
-    public void destaparBombas(){
-        for (int i = 0; i<dimTablero; i++){
-            for (int j = 0; j < dimTablero; j++){
-                casillas[i][j].banderita = false;
-                if (casillas[i][j].contenido==100){
-                    casillas[i][j].destapada = true;
-                }
-            }
-        }
-        invalidate();
-    }
-
-    public void reiniciarJuego(){
-        casillas = new Casilla[dimTablero][dimTablero];
-        for (int i = 0; i<dimTablero; i++){
-            for (int j = 0; j<dimTablero; j++){
-                casillas[i][j] = new Casilla();
-            }
-        }
-        colocarMinas();
-        contarBombasDelPerimetro();
-        activo = true;
-        media.start();
-        invalidate();
-    }
-
-    private void colocarMinas(){
-        int cantidadDeMinasPorColocar = numMinas;
-        while (cantidadDeMinasPorColocar>0){
-            int fila = (int) (Math.random()*dimTablero);
-            int columna = (int) (Math.random()*dimTablero);
-            if (casillas[fila][columna].contenido == 0){
-                casillas[fila][columna].contenido = 100;
-                cantidadDeMinasPorColocar --;
-            }
-        }
-    }
 
     private boolean ganar(){
         int cantidad = 0;
@@ -220,70 +189,6 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         } else {
             return false;
         }
-    }
-
-    private void contarBombasDelPerimetro() {
-        for (int i = 0; i < dimTablero; i++) {
-            for (int j = 0; j < dimTablero; j++) {
-                if (casillas[i][j].contenido == 0) {
-                    casillas[i][j].contenido = contarCoordenada(i, j);
-                }
-            }
-        }
-    }
-
-    private int contarCoordenada(int fila, int columna){
-        int cantidadDeBombas = 0;
-
-        if (fila - 1 >= 0 && columna - 1 >=0){
-            if (casillas[fila-1][columna-1].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        if (fila - 1 >= 0){
-            if (casillas[fila-1][columna].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        if (fila - 1 >= 0 && columna + 1 <dimTablero){
-            if (casillas[fila-1][columna+1].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        if ( columna + 1 <dimTablero){
-            if (casillas[fila][columna+1].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        if (fila + 1 <dimTablero && columna + 1 <dimTablero){
-            if (casillas[fila+1][columna+1].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        if (fila + 1 <dimTablero ){
-            if (casillas[fila+1][columna].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        if (fila + 1 <dimTablero && columna - 1 >=0){
-            if (casillas[fila+1][columna-1].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        if ( columna - 1 >=0){
-            if (casillas[fila][columna-1].contenido==100){
-                cantidadDeBombas++;
-            }
-        }
-
-        return cantidadDeBombas;
     }
 
     private void recorrer(int fila, int columna){
