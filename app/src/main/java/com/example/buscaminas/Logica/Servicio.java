@@ -8,18 +8,19 @@ public class Servicio {
     private static Servicio servicio;
     private int dimTablero;
     private static Casilla[][] casillas;
-    private int numMinas;
+    private static int numMinas;
 
-    private  Servicio(int dimTablero, int numMinas) {
+    private  Servicio(int dimTablero) {
         this.dimTablero=dimTablero;
-        this.numMinas=numMinas;
+
     }
 
 
-    public static Servicio getServicio(int dimTablero, int numMinas, Casilla[][] casillass){
+    public static Servicio getServicio(int dimTablero, int numMinass, Casilla[][] casillass){
         casillas = casillass;
+        numMinas=numMinass;
         if(servicio==null){
-            servicio=new Servicio(dimTablero, numMinas);
+            servicio=new Servicio(dimTablero);
         }
         return servicio;
     }

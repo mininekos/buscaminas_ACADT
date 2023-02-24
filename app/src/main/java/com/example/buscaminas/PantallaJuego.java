@@ -174,23 +174,6 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     }
 
 
-    private boolean ganar(){
-        int cantidad = 0;
-        for (int i = 0; i< dimTablero; i++){
-            for (int j = 0; j<dimTablero; j++){
-                if (casillas[i][j].destapada){
-                    cantidad++;
-                }
-            }
-        }
-
-        if (cantidad == (dimTablero*dimTablero- numMinas)){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void recorrer(int fila, int columna){
 
         if (fila>=0 && fila <dimTablero && columna>=0 && columna<dimTablero){
