@@ -103,16 +103,8 @@ public class Servicio {
     }
 
     public boolean ganar(){
-        int cantidad = 0;
-        for (int i = 0; i< dimTablero; i++){
-            for (int j = 0; j<dimTablero; j++){
-                if (casillas[i][j].destapada){
-                    cantidad++;
-                }
-            }
-        }
 
-        if (cantidad == (dimTablero*dimTablero- numMinas)){
+        if (casillasDestapas() == (dimTablero*dimTablero- numMinas)){
             return true;
         } else {
             return false;
@@ -143,4 +135,15 @@ public class Servicio {
         return casillas;
     }
 
+    public int casillasDestapas(){
+        int cantidad = 0;
+        for (int i = 0; i< dimTablero; i++){
+            for (int j = 0; j<dimTablero; j++){
+                if (casillas[i][j].destapada){
+                    cantidad++;
+                }
+            }
+        }
+        return cantidad;
+    }
 }

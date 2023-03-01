@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.btnJugar.setOnClickListener(this);
         binding.btnConfiguracion.setOnClickListener(this);
         binding.btnSalir.setOnClickListener(this);
+        binding.btnHistorial.setOnClickListener(this);
 
         preferencias=getSharedPreferences("Todo", Context.MODE_PRIVATE);
         editor = preferencias.edit();
@@ -52,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(R.id.btnSalir==view.getId()){
             crearDialogo().show();
+        }
+        if(R.id.btn_Historial==view.getId()){
+            Intent i = new Intent(MainActivity.this,HistorialDePartidas.class);
+            startActivity(i);
         }
     }
 

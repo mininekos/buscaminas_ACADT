@@ -21,6 +21,7 @@ public class Configuracion extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         binding=ActivityConfiguracionBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);

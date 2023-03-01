@@ -7,4 +7,6 @@
     <string name="Jugar">Jugar</string>
     <string name="Configuracion">Configuracion</string>
     <string name="Salir">Salir</string>
+    <string name="Historial">Historial Buscaminas</string>
+    <string name="btnHistorial">Historial</string>
 </resources>

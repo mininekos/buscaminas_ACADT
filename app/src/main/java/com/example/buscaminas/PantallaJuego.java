@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -16,15 +17,19 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
+import com.example.buscaminas.BBDD.DbHelper;
 import com.example.buscaminas.Hilos.GameLoopThread;
 import com.example.buscaminas.Logica.Servicio;
 import com.example.buscaminas.Menu.Barra;
 import com.example.buscaminas.Menu.Button;
 import com.example.buscaminas.Menu.Componente;
 import com.example.buscaminas.Recursos.Casilla;
+import com.example.buscaminas.Recursos.PuntuacionPartida;
 import com.example.buscaminas.Recursos.Tablero;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback{
 
@@ -41,6 +46,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
     private MediaPlayer media;
     private SoundPool soundPool;
     private int musicaBomba;
+    private DbHelper dbHelper;
 
 
     public PantallaJuego(Context context) {
@@ -58,6 +64,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         media.start();
         invalidate();
         tablero= new Tablero(context,1000,2500,dimTablero,casillas,getResources());
+        dbHelper = new DbHelper(context);
 
 
         soundPool = new SoundPool( 1, AudioManager.STREAM_MUSIC , 0);
@@ -126,9 +133,12 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
                                 if (casillas[i][j].contenido == 100) {
                                     media.pause();
                                     soundPool.play(musicaBomba,1,1,1,0,1);
-
                                     casillas= Servicio.getServicio(dimTablero,numMinas,casillas).destaparBombas();
                                     activo = false;
+                                    insertarPuntuacion();
+
+
+
                                 } else if (casillas[i][j].contenido == 0) {
                                     recorrer(i, j);
                                 }
@@ -141,6 +151,7 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
 
             if (activo && Servicio.getServicio(dimTablero,numMinas,casillas).ganar()){
                 casillas= Servicio.getServicio(dimTablero,numMinas,casillas).destaparBombas();
+                insertarPuntuacion();
                 activo = false;
             }
 
@@ -214,6 +225,15 @@ public class PantallaJuego extends SurfaceView implements SurfaceHolder.Callback
         media.stop();
         ((Activity) context).finish();
 
+    }
+
+    public void insertarPuntuacion(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dbHelper.insertarPartida(new PuntuacionPartida( LocalDate.now().toString(),Servicio.getServicio(dimTablero,numMinas,casillas).casillasDestapas()-8 + ""));
+        }
+        else {
+            dbHelper.insertarPartida(new PuntuacionPartida( new Date().toString(),Servicio.getServicio(dimTablero,numMinas,casillas).casillasDestapas()-8 + ""));
+        }
     }
 
 

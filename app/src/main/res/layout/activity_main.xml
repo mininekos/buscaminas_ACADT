@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="200dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +29,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/Configuracion" />
+
+        <Button
+            android:id="@+id/btn_Historial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnHistorial" />
 
         <Button
             android:id="@+id/btnSalir"
